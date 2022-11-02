@@ -90,8 +90,6 @@ namespace Cosmos.Cms.Common.Data
         /// </summary>
         public DbSet<Template> Templates { get; set; }
 
-        public DbSet<ScriptCatalogEntry> ScriptCatalog { get; set; }
-
         /// <summary>
         /// Site settings.
         /// </summary>

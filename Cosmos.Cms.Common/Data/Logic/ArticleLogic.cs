@@ -197,13 +197,13 @@ namespace Cosmos.Cms.Common.Data.Logic
 
 
             if (publishedOnly)
-                article = await DbContext.Articles.WithPartitionKey(urlPath)
-                    .Where(a => a.Published <= DateTimeOffset.UtcNow &&
+                article = await DbContext.Articles
+                    .Where(a => a.UrlPath == urlPath && a.Published <= DateTimeOffset.UtcNow &&
                                 activeStatusCodes.Contains(a.StatusCode))
                     .OrderByDescending(o => o.VersionNumber).FirstOrDefaultAsync();
             else
-                article = await DbContext.Articles.WithPartitionKey(urlPath)
-                    .Where(a => activeStatusCodes.Contains(a.StatusCode))
+                article = await DbContext.Articles
+                    .Where(a => a.UrlPath == urlPath && activeStatusCodes.Contains(a.StatusCode))
                     .OrderByDescending(o => o.VersionNumber)
                     .FirstOrDefaultAsync();
 
