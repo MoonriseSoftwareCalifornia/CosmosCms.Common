@@ -41,7 +41,7 @@ namespace Cosmos.Cms.Common.Data
                 .HasPartitionKey(a => a.ArticleNumber)
                 .HasKey(article => article.Id);
 
-            modelBuilder.Entity<Article>()
+            modelBuilder.Entity<Page>()
                 .ToContainer("Pages")
                 .HasPartitionKey(a => a.UrlPath)
                 .HasKey(article => article.Id);
@@ -71,7 +71,7 @@ namespace Cosmos.Cms.Common.Data
         /// <summary>
         /// Published pages viewable via the publisher.
         /// </summary>
-        public DbSet<Article> Pages { get; set; }
+        public DbSet<Page> Pages { get; set; }
 
         /// <summary>
         /// Catalog of Articles

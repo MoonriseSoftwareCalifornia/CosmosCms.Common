@@ -192,7 +192,7 @@ namespace Cosmos.Cms.Common.Data.Logic
         ///         </item>
         ///     </list>
         /// </returns>
-        protected async Task<ArticleViewModel> BuildArticleViewModel(Article article, string lang, bool useCache = true)
+        protected async Task<ArticleViewModel> BuildArticleViewModel(IArticle article, string lang, bool useCache = true)
         {
 
             var languageName = "US English";
