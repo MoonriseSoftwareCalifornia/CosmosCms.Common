@@ -192,7 +192,7 @@ namespace Cosmos.Cms.Common.Data.Logic
         ///         </item>
         ///     </list>
         /// </returns>
-        protected async Task<ArticleViewModel> BuildArticleViewModel(IArticle article, string lang, bool useCache = true)
+        protected async Task<ArticleViewModel> BuildArticleViewModel(Article article, string lang, bool useCache = true)
         {
 
             var languageName = "US English";
@@ -212,6 +212,65 @@ namespace Cosmos.Cms.Common.Data.Logic
             }
 
             
+            return new ArticleViewModel
+            {
+                ArticleNumber = article.ArticleNumber,
+                LanguageCode = lang,
+                LanguageName = languageName,
+                CacheDuration = 10,
+                Content = article.Content,
+                StatusCode = (StatusCodeEnum)article.StatusCode,
+                Id = article.Id,
+                Published = article.Published.HasValue ? article.Published.Value : null,
+                Title = article.Title,
+                UrlPath = article.UrlPath,
+                Updated = article.Updated,
+                VersionNumber = article.VersionNumber,
+                HeadJavaScript = article.HeaderJavaScript,
+                FooterJavaScript = article.FooterJavaScript,
+                Layout = await GetDefaultLayout(),
+                ReadWriteMode = _isEditor,
+                RoleList = article.RoleList,
+                Expires = article.Expires.HasValue ? article.Expires.Value : null
+            };
+        }
+
+        /// <summary>
+        ///     This method creates an <see cref="ArticleViewModel" /> ready for display and edit.
+        /// </summary>
+        /// <param name="article"></param>
+        /// <param name="lang"></param>
+        /// <returns>
+        ///     <para>Returns <see cref="ArticleViewModel" /> that includes:</para>
+        ///     <list type="bullet">
+        ///         <item>
+        ///             Current ArticleVersionInfo
+        ///         </item>
+        ///         <item>
+        ///             If the site is in authoring or publishing mode (<see cref="ArticleViewModel.ReadWriteMode" />)
+        ///         </item>
+        ///     </list>
+        /// </returns>
+        protected async Task<ArticleViewModel> BuildArticleViewModel(PublishedPage article, string lang, bool useCache = true)
+        {
+
+            var languageName = "US English";
+
+            if (!string.IsNullOrEmpty(lang) && _translationServices != null && CosmosOptions.Value.GoogleCloudAuthConfig != null && CosmosOptions.Value.PrimaryLanguageCode.Equals(lang, StringComparison.CurrentCultureIgnoreCase) == false)
+            {
+                var result =
+                    await _translationServices.GetTranslation(lang, "", new[] { article.Title, article.Content });
+
+                languageName =
+                    (await GetSupportedLanguages(lang))?.Languages.FirstOrDefault(f => f.LanguageCode == lang)
+                    ?.DisplayName ?? lang;
+
+                article.Title = result.Translations[0].TranslatedText;
+
+                article.Content = result.Translations[1].TranslatedText;
+            }
+
+
             return new ArticleViewModel
             {
                 ArticleNumber = article.ArticleNumber,

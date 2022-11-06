@@ -36,12 +36,17 @@ namespace Cosmos.Cms.Common.Data
         {
             modelBuilder.HasDefaultContainer("CosmosCms");
 
+            // Need to make a convertion so article number can be used as a partition key
+            modelBuilder.Entity<Article>()
+                .Property(e => e.ArticleNumber)
+                .HasConversion<string>();
+
             modelBuilder.Entity<Article>()
                 .ToContainer(nameof(Article))
                 .HasPartitionKey(a => a.ArticleNumber)
                 .HasKey(article => article.Id);
 
-            modelBuilder.Entity<Page>()
+            modelBuilder.Entity<PublishedPage>()
                 .ToContainer("Pages")
                 .HasPartitionKey(a => a.UrlPath)
                 .HasKey(article => article.Id);
@@ -71,7 +76,7 @@ namespace Cosmos.Cms.Common.Data
         /// <summary>
         /// Published pages viewable via the publisher.
         /// </summary>
-        public DbSet<Page> Pages { get; set; }
+        public DbSet<PublishedPage> Pages { get; set; }
 
         /// <summary>
         /// Catalog of Articles

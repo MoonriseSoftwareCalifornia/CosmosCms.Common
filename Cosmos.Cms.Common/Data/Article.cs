@@ -8,7 +8,7 @@ namespace Cosmos.Cms.Common.Data
     ///     Article
     /// </summary>
     /// <remarks>An article is the content for a web page.</remarks>
-    public class Article : IArticle
+    public class Article
     {
         /// <summary>
         ///     Unique article entity primary key number (not to be confused with article number)

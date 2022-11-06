@@ -7,7 +7,7 @@ namespace Cosmos.Cms.Common.Data
     /// <summary>
     /// Published article or page
     /// </summary>
-    public class Page : IArticle
+    public class PublishedPage
     {
         /// <summary>
         ///     Unique article entity primary key number (not to be confused with article number)
