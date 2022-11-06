@@ -157,56 +157,15 @@ namespace Cosmos.Cms.Common.Data.Logic
         ///     </para>
         ///     <para>NOTE: Cannot access articles that have been deleted.</para>
         /// </remarks>
-        public async Task<ArticleViewModel> GetByUrl(string urlPath, string lang = "", bool publishedOnly = true,
-            bool onlyActive = true)
+        public virtual async Task<ArticleViewModel> GetByUrl(string urlPath, string lang = "")
         {
-            return await GetArticle(urlPath, publishedOnly, onlyActive, lang);
-        }
-
-        /// <summary>
-        ///     Private method used return an article view model.
-        /// </summary>
-        /// <param name="urlPath"></param>
-        /// <param name="publishedOnly"></param>
-        /// <param name="onlyActive"></param>
-        /// <param name="lang">Language to translate the en-US into.</param>
-        /// <returns>
-        /// <para>Returns an <see cref="ArticleViewModel" /> created with <see cref="BuildArticleViewModel" />.</para>
-        /// <para>This method utilizes a memory cache to briefly cache queries to the database.</para>  
-        /// <para>NOTE: Cannot access articles that have been deleted.</para>
-        /// </returns>
-        private async Task<ArticleViewModel> GetArticle(string urlPath, bool publishedOnly, bool onlyActive,
-            string lang)
-        {
-
             urlPath = urlPath?.ToLower().Trim(new char[] { ' ', '/' });
             if (string.IsNullOrEmpty(urlPath) || urlPath.Trim() == "/")
                 urlPath = "root";
 
-            //var options = new MemoryCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5) };
-
-            var layout = DbContext.Layouts.FirstOrDefault(f => f.IsDefault == true);
-
-            //urlPath = urlPath?.ToLower().Trim('/');
-            Article article;
-            // Get time zone info
-            //var pst = TimeZoneUtility.ConvertUtcDateTimeToPst(DateTime.UtcNow);
-
-            var activeStatusCodes =
-                onlyActive ? new[] { 0, 3 } : new[] { 0, 1, 3 }; // i.e. StatusCode.Active (DEFAULT) and StatusCode.Redirect
-
-
-            if (publishedOnly)
-                article = await DbContext.Articles
-                    .Where(a => a.UrlPath == urlPath && a.Published <= DateTimeOffset.UtcNow &&
-                                activeStatusCodes.Contains(a.StatusCode))
-                    .OrderByDescending(o => o.VersionNumber).FirstOrDefaultAsync();
-            else
-                article = await DbContext.Articles
-                    .Where(a => a.UrlPath == urlPath && activeStatusCodes.Contains(a.StatusCode))
-                    .OrderByDescending(o => o.VersionNumber)
-                    .FirstOrDefaultAsync();
-
+            var article = await DbContext.Pages.WithPartitionKey(urlPath)
+                   .Where(a => a.Published <= DateTimeOffset.UtcNow)
+                   .OrderByDescending(o => o.VersionNumber).FirstOrDefaultAsync();
 
             if (article == null) return null;
 

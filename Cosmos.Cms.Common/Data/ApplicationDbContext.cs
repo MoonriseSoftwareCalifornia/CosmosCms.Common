@@ -38,14 +38,22 @@ namespace Cosmos.Cms.Common.Data
 
             modelBuilder.Entity<Article>()
                 .ToContainer(nameof(Article))
+                .HasPartitionKey(a => a.ArticleNumber)
+                .HasKey(article => article.Id);
+
+            modelBuilder.Entity<Article>()
+                .ToContainer("Pages")
+                .HasPartitionKey(a => a.UrlPath)
                 .HasKey(article => article.Id);
 
             modelBuilder.Entity<ArticleLog>()
                 .ToContainer(nameof(ArticleLog))
+                .HasPartitionKey(k => k.Id)
                 .HasKey(log => log.Id);
 
             modelBuilder.Entity<NodeScript>()
                 .ToContainer(nameof(NodeScript))
+                .HasPartitionKey(k => k.Id)
                 .HasKey(node => node.Id);
 
             base.OnModelCreating(modelBuilder);
@@ -59,6 +67,11 @@ namespace Cosmos.Cms.Common.Data
         ///     Articles
         /// </summary>
         public DbSet<Article> Articles { get; set; }
+
+        /// <summary>
+        /// Published pages viewable via the publisher.
+        /// </summary>
+        public DbSet<Article> Pages { get; set; }
 
         /// <summary>
         /// Catalog of Articles

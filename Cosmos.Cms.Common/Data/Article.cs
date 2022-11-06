@@ -88,7 +88,7 @@ namespace Cosmos.Cms.Common.Data
         [DataType(DataType.Html)]
         public string FooterJavaScript { get; set; }
 
-        #region NAVIGATIONS
+        #region PERMISSIONS
 
         /// <summary>
         ///     A comma delimited list of roles that can access this article. If blank the assumption is anonymous access.
