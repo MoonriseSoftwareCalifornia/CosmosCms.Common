@@ -2,6 +2,7 @@
 using Cosmos.Cms.Common.Services;
 using Cosmos.Cms.Common.Services.Configurations;
 using Google.Cloud.Translate.V3;
+using Google.Type;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
@@ -25,6 +26,7 @@ namespace Cosmos.Cms.Common.Data.Logic
     {
         private readonly bool _isEditor;
         private readonly TranslationServices _translationServices;
+        private readonly IMemoryCache _memoryCache;
         /// <summary>
         ///     Publisher Constructor
         /// </summary>
@@ -37,6 +39,7 @@ namespace Cosmos.Cms.Common.Data.Logic
         /// <param name="memoryCacheMaxSeconds">Maximum seconds to store item in memory cache.</param>
         public ArticleLogic(ApplicationDbContext dbContext,
             IOptions<CosmosConfig> config,
+            IMemoryCache memoryCache,
             bool isEditor = false)
         {
             DbContext = dbContext;
@@ -94,7 +97,7 @@ namespace Cosmos.Cms.Common.Data.Logic
             //            (EF.Functions.Like(a.Title, prefix + "%/%") == false)).Distinct();
 
             var query = (from t in DbContext.Articles
-                    where t.Published <= DateTime.UtcNow &&
+                    where t.Published <= DateTimeOffset.UtcNow &&
                     t.StatusCode == 0 &&
                     EF.Functions.Like(t.Title, prefix + "%") &&
                     (EF.Functions.Like(t.Title, prefix + "%/%") == false)
@@ -157,25 +160,47 @@ namespace Cosmos.Cms.Common.Data.Logic
         ///     </para>
         ///     <para>NOTE: Cannot access articles that have been deleted.</para>
         /// </remarks>
-        public virtual async Task<ArticleViewModel> GetByUrl(string urlPath, string lang = "")
+        public virtual async Task<ArticleViewModel> GetByUrl(string urlPath, string lang = "", TimeSpan? cacheSpan = null, TimeSpan? layoutCache = null)
         {
             urlPath = urlPath?.ToLower().Trim(new char[] { ' ', '/' });
             if (string.IsNullOrEmpty(urlPath) || urlPath.Trim() == "/")
                 urlPath = "root";
 
-            var article = await DbContext.Pages.WithPartitionKey(urlPath)
+            if (cacheSpan == null)
+            {
+                var entity = await DbContext.Pages.WithPartitionKey(urlPath)
+               .Where(a => a.Published <= DateTimeOffset.UtcNow)
+               .OrderByDescending(o => o.VersionNumber).FirstOrDefaultAsync();
+
+                if (entity == null)
+                    return null;
+
+                return await BuildArticleViewModel(entity, lang);
+            }
+
+            _memoryCache.TryGetValue($"{urlPath}-{lang}", out ArticleViewModel model);
+
+            if (model == null)
+            {
+                var data = await DbContext.Pages.WithPartitionKey(urlPath)
                    .Where(a => a.Published <= DateTimeOffset.UtcNow)
                    .OrderByDescending(o => o.VersionNumber).FirstOrDefaultAsync();
 
-            if (article == null) return null;
+                if (data == null)
+                    return null;
 
-            return await BuildArticleViewModel(article, lang);
+                model = await BuildArticleViewModel(data, lang, layoutCache);
+
+                _memoryCache.Set($"{urlPath}-{lang}", model, cacheSpan.Value);
+            }
+
+            return model;
+
         }
 
         #endregion
 
         #region PRIVATE METHODS
-
         /// <summary>
         ///     This method creates an <see cref="ArticleViewModel" /> ready for display and edit.
         /// </summary>
@@ -192,7 +217,7 @@ namespace Cosmos.Cms.Common.Data.Logic
         ///         </item>
         ///     </list>
         /// </returns>
-        protected async Task<ArticleViewModel> BuildArticleViewModel(Article article, string lang, bool useCache = true)
+        protected async Task<ArticleViewModel> BuildArticleViewModel(Article article, string lang)
         {
 
             var languageName = "US English";
@@ -251,7 +276,7 @@ namespace Cosmos.Cms.Common.Data.Logic
         ///         </item>
         ///     </list>
         /// </returns>
-        protected async Task<ArticleViewModel> BuildArticleViewModel(PublishedPage article, string lang, bool useCache = true)
+        protected async Task<ArticleViewModel> BuildArticleViewModel(PublishedPage article, string lang, TimeSpan? layoutCache = null)
         {
 
             var languageName = "US English";
@@ -287,7 +312,7 @@ namespace Cosmos.Cms.Common.Data.Logic
                 VersionNumber = article.VersionNumber,
                 HeadJavaScript = article.HeaderJavaScript,
                 FooterJavaScript = article.FooterJavaScript,
-                Layout = await GetDefaultLayout(),
+                Layout = await GetDefaultLayout(layoutCache),
                 ReadWriteMode = _isEditor,
                 RoleList = article.RoleList,
                 Expires = article.Expires.HasValue ? article.Expires.Value : null
@@ -333,44 +358,25 @@ namespace Cosmos.Cms.Common.Data.Logic
         ///         <see cref="LayoutViewModel.HtmlHeader" />
         ///     </para>
         /// </remarks>
-        public async Task<LayoutViewModel> GetDefaultLayout(MemoryCacheEntryOptions options = null)
+        public async Task<LayoutViewModel> GetDefaultLayout(TimeSpan? layoutCache = null)
         {
-            if (options == null)
+            if (layoutCache == null)
             {
-                options = new MemoryCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5) };
-            }
-            LayoutViewModel layoutViewModel;
-
-            var layout = DbContext.Layouts.FirstOrDefault(a => a.IsDefault);
-
-            //
-            // If no layout exists, creates a new default one.
-            //
-            if (layout == null)
-            {
-                layoutViewModel = new LayoutViewModel();
-                layout = layoutViewModel.GetLayout();
-                await DbContext.Layouts.AddAsync(layout);
-                await DbContext.SaveChangesAsync();
-            }
-            else
-            {
-                layoutViewModel = new LayoutViewModel()
-                {
-                    FooterHtmlContent = layout.FooterHtmlContent,
-                    Head = layout.Head,
-                    HtmlHeader = layout.HtmlHeader,
-                    Id = layout.Id,
-                    IsDefault = layout.IsDefault,
-                    LayoutName = layout.LayoutName,
-                    Notes = layout.Notes
-                };
+                var entity = await DbContext.Layouts.AsNoTracking().FirstOrDefaultAsync(a => a.IsDefault);
+                return new LayoutViewModel(entity);
             }
 
-            // Make sure no changes are tracked with the layout.
-            DbContext.Entry(layout).State = EntityState.Detached;
+            _memoryCache.TryGetValue("defLayout", out LayoutViewModel model);
 
-            return new LayoutViewModel(layout);
+            if (model == null)
+            {
+                var entity = await DbContext.Layouts.FirstOrDefaultAsync(a => a.IsDefault);
+                DbContext.Entry(entity).State = EntityState.Detached;
+                model = new LayoutViewModel(entity);
+                _memoryCache.Set("defLayout", model, layoutCache.Value);
+            }
+
+            return model;
         }
 
 

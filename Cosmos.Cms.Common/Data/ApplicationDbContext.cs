@@ -37,13 +37,36 @@ namespace Cosmos.Cms.Common.Data
             modelBuilder.HasDefaultContainer("CosmosCms");
 
             // Need to make a convertion so article number can be used as a partition key
+
             modelBuilder.Entity<Article>()
                 .Property(e => e.ArticleNumber)
                 .HasConversion<string>();
-
             modelBuilder.Entity<Article>()
-                .ToContainer(nameof(Article))
+                .ToContainer("Articles")
                 .HasPartitionKey(a => a.ArticleNumber)
+                .HasKey(article => article.Id);
+
+            modelBuilder.Entity<ArticleLock>()
+                .ToContainer("ArticleLocks")
+                .HasPartitionKey(a => a.Id)
+                .HasKey(article => article.Id);
+
+            modelBuilder.Entity<ArticleLog>()
+                .ToContainer("ArticleLogs")
+                .HasPartitionKey(k => k.Id)
+                .HasKey(log => log.Id);
+
+            modelBuilder.Entity<CatalogEntry>()
+                .Property(e => e.ArticleNumber)
+                .HasConversion<string>();
+            modelBuilder.Entity<CatalogEntry>()
+                .ToContainer("ArticleCatalog")
+                .HasPartitionKey(k => k.ArticleNumber)
+                .HasKey(log => log.ArticleNumber);
+
+            modelBuilder.Entity<Layout>()
+                .ToContainer("Layouts")
+                .HasPartitionKey(a => a.Id)
                 .HasKey(article => article.Id);
 
             modelBuilder.Entity<PublishedPage>()
@@ -51,13 +74,13 @@ namespace Cosmos.Cms.Common.Data
                 .HasPartitionKey(a => a.UrlPath)
                 .HasKey(article => article.Id);
 
-            modelBuilder.Entity<ArticleLog>()
-                .ToContainer(nameof(ArticleLog))
-                .HasPartitionKey(k => k.Id)
-                .HasKey(log => log.Id);
+            modelBuilder.Entity<Setting>()
+                .ToContainer("Settings")
+                .HasPartitionKey(a => a.Id)
+                .HasKey(article => article.Id);
 
-            modelBuilder.Entity<NodeScript>()
-                .ToContainer(nameof(NodeScript))
+            modelBuilder.Entity<Template>()
+                .ToContainer("Templates")
                 .HasPartitionKey(k => k.Id)
                 .HasKey(node => node.Id);
 
@@ -74,16 +97,6 @@ namespace Cosmos.Cms.Common.Data
         public DbSet<Article> Articles { get; set; }
 
         /// <summary>
-        /// Published pages viewable via the publisher.
-        /// </summary>
-        public DbSet<PublishedPage> Pages { get; set; }
-
-        /// <summary>
-        /// Catalog of Articles
-        /// </summary>
-        public DbSet<CatalogEntry> ArticleCatalog { get; set; }
-
-        /// <summary>
         /// Article locks
         /// </summary>
         public DbSet<ArticleLock> ArticleLocks { get; set; }
@@ -92,6 +105,11 @@ namespace Cosmos.Cms.Common.Data
         ///     Article activity logs
         /// </summary>
         public DbSet<ArticleLog> ArticleLogs { get; set; }
+
+        /// <summary>
+        /// Catalog of Articles
+        /// </summary>
+        public DbSet<CatalogEntry> ArticleCatalog { get; set; }
 
         /// <summary>
         ///     Website layouts
@@ -104,14 +122,20 @@ namespace Cosmos.Cms.Common.Data
         public DbSet<NodeScript> NodeScripts { get; set; }
 
         /// <summary>
-        ///     Web page templates
+        /// Published pages viewable via the publisher.
         /// </summary>
-        public DbSet<Template> Templates { get; set; }
+        public DbSet<PublishedPage> Pages { get; set; }
 
         /// <summary>
         /// Site settings.
         /// </summary>
         public DbSet<Setting> Settings { get; set; }
+
+        /// <summary>
+        ///     Web page templates
+        /// </summary>
+        public DbSet<Template> Templates { get; set; }
+
 
         #endregion
     }
