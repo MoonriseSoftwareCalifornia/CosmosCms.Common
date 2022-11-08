@@ -166,7 +166,7 @@ namespace Cosmos.Cms.Common.Data.Logic
             if (string.IsNullOrEmpty(urlPath) || urlPath.Trim() == "/")
                 urlPath = "root";
 
-            if (cacheSpan == null)
+            if (_memoryCache == null || cacheSpan == null)
             {
                 var entity = await DbContext.Pages.WithPartitionKey(urlPath)
                .Where(a => a.Published <= DateTimeOffset.UtcNow)
@@ -360,7 +360,7 @@ namespace Cosmos.Cms.Common.Data.Logic
         /// </remarks>
         public async Task<LayoutViewModel> GetDefaultLayout(TimeSpan? layoutCache = null)
         {
-            if (layoutCache == null)
+            if (_memoryCache == null || layoutCache == null)
             {
                 var entity = await DbContext.Layouts.AsNoTracking().FirstOrDefaultAsync(a => a.IsDefault);
                 return new LayoutViewModel(entity);
