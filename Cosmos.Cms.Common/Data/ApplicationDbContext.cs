@@ -98,10 +98,11 @@ namespace Cosmos.Cms.Common.Data
 
         #region DbContext
 
+
         /// <summary>
-        ///     Articles
+        /// Catalog of Articles
         /// </summary>
-        public DbSet<Article> Articles { get; set; }
+        public DbSet<CatalogEntry> ArticleCatalog { get; set; }
 
         /// <summary>
         /// Article locks
@@ -114,9 +115,14 @@ namespace Cosmos.Cms.Common.Data
         public DbSet<ArticleLog> ArticleLogs { get; set; }
 
         /// <summary>
-        /// Catalog of Articles
+        ///     Article Numbers
         /// </summary>
-        public DbSet<CatalogEntry> ArticleCatalog { get; set; }
+        public DbSet<ArticleNumber> ArticleNumbers { get; set; }
+
+        /// <summary>
+        ///     Articles
+        /// </summary>
+        public DbSet<Article> Articles { get; set; }
 
         /// <summary>
         ///     Website layouts

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Deterministic>true</Deterministic>
-		<TargetFrameworks>net6.0</TargetFrameworks>
+		<TargetFrameworks>net7.0</TargetFrameworks>
 		<Authors>toiyabe62</Authors>
 		<Company>Moonrise Software LLC</Company>
 		<Product>Cosmos CMS</Product>
@@ -15,9 +15,9 @@
 		<AnalysisLevel>5.0</AnalysisLevel>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<RepositoryUrl>https://github.com/CosmosSoftware/CosmosCms.Common</RepositoryUrl>
-		<Version>7.3.7</Version>
-		<AssemblyVersion>7.3.7.1</AssemblyVersion>
-		<FileVersion>7.3.7.1</FileVersion>
+		<Version>7.4.1</Version>
+		<AssemblyVersion>7.4.1.1</AssemblyVersion>
+		<FileVersion>7.4.1.1</FileVersion>
 		<UserSecretsId>498e495c-d772-4d44-870d-92009f01de57</UserSecretsId>
 		<PackageProjectUrl>https://www.moonrise.net/Cosmos</PackageProjectUrl>
 		<NeutralLanguage></NeutralLanguage>
@@ -60,30 +60,29 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AspNetCore.Identity.CosmosDb" Version="2.0.20" />
+		<PackageReference Include="AspNetCore.Identity.CosmosDb" Version="2.0.22" />
 		<PackageReference Include="AspNetCore.Identity.Services.SendGrid" Version="2.0.8" />
-		<PackageReference Include="AWSSDK.S3" Version="3.7.101.6" />
-		<PackageReference Include="AWSSDK.SecretsManager" Version="3.7.100.6" />
+		<PackageReference Include="AWSSDK.S3" Version="3.7.101.15" />
+		<PackageReference Include="AWSSDK.SecretsManager" Version="3.7.100.15" />
 		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
-		<PackageReference Include="Azure.Identity" Version="1.7.0" />
+		<PackageReference Include="Azure.Identity" Version="1.8.0" />
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
 		<PackageReference Include="Jering.Javascript.NodeJS" Version="6.3.1" />
-		<PackageReference Include="Microsoft.Azure.Management.Cdn" Version="6.1.0" />
 		<PackageReference Include="Google.Cloud.Translate.V3" Version="3.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.10" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.10" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.10" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.10">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.47.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.48.0" />
 		<PackageReference Include="SendGrid" Version="9.28.1" />
 	</ItemGroup>
 

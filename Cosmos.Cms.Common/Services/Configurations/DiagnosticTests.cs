@@ -2,11 +2,9 @@
 using Amazon.S3;
 using Azure.Storage.Blobs;
 using Cosmos.Cms.Common.Data;
-using Microsoft.Azure.Management.Cdn;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
-using Microsoft.Rest;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
@@ -638,42 +636,42 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
 
                                     var authResult = await app.AcquireTokenForClient(new[] { scope }).ExecuteAsync();
 
-                                    using var client = new CdnManagementClient(new TokenCredentials(authResult.AccessToken))
-                                    {
-                                        SubscriptionId = _config.Value.CdnConfig.AzureCdnConfig.SubscriptionId
-                                    };
+                                    //using var client = new CdnManagementClient(new TokenCredentials(authResult.AccessToken))
+                                    //{
+                                    //    SubscriptionId = _config.Value.CdnConfig.AzureCdnConfig.SubscriptionId
+                                    //};
 
-                                    if (authResult.TokenType == "Bearer")
-                                    {
-                                        var profiles = await client.Profiles.ListWithHttpMessagesAsync();
-                                        if (profiles != null)
-                                        {
-                                            diagnostics.Add(new Diagnostic()
-                                            {
-                                                Message = "Connection to Azure CDN succeeded.",
-                                                ServiceType = CDNSERVICETYPENAME,
-                                                Success = true
-                                            });
-                                        }
-                                        else
-                                        {
-                                            diagnostics.Add(new Diagnostic()
-                                            {
-                                                Message = "Azure CDN endpoint connection failed.",
-                                                ServiceType = CDNSERVICETYPENAME,
-                                                Success = false
-                                            });
-                                        }
-                                    }
-                                    else
-                                    {
-                                        diagnostics.Add(new Diagnostic()
-                                        {
-                                            Message = "Azure CDN endpoint connection failed.",
-                                            ServiceType = CDNSERVICETYPENAME,
-                                            Success = false
-                                        });
-                                    }
+                                    //if (authResult.TokenType == "Bearer")
+                                    //{
+                                    //    var profiles = await client.Profiles.ListWithHttpMessagesAsync();
+                                    //    if (profiles != null)
+                                    //    {
+                                    //        diagnostics.Add(new Diagnostic()
+                                    //        {
+                                    //            Message = "Connection to Azure CDN succeeded.",
+                                    //            ServiceType = CDNSERVICETYPENAME,
+                                    //            Success = true
+                                    //        });
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        diagnostics.Add(new Diagnostic()
+                                    //        {
+                                    //            Message = "Azure CDN endpoint connection failed.",
+                                    //            ServiceType = CDNSERVICETYPENAME,
+                                    //            Success = false
+                                    //        });
+                                    //    }
+                                    //}
+                                    //else
+                                    //{
+                                    //    diagnostics.Add(new Diagnostic()
+                                    //    {
+                                    //        Message = "Azure CDN endpoint connection failed.",
+                                    //        ServiceType = CDNSERVICETYPENAME,
+                                    //        Success = false
+                                    //    });
+                                    //}
 
                                 }
                                 catch (Exception e)
