@@ -38,9 +38,15 @@ namespace Cosmos.Cms.Common.Data
 
             // Need to make a convertion so article number can be used as a partition key
 
+            modelBuilder.Entity<ArticleNumber>()
+                .ToContainer("ArticleNumber")
+                .HasPartitionKey(k => k.Id)
+                .HasKey(k => k.Id);
+
             modelBuilder.Entity<Article>()
                 .Property(e => e.ArticleNumber)
                 .HasConversion<string>();
+
             modelBuilder.Entity<Article>()
                 .ToContainer("Articles")
                 .HasPartitionKey(a => a.ArticleNumber)
@@ -59,6 +65,7 @@ namespace Cosmos.Cms.Common.Data
             modelBuilder.Entity<CatalogEntry>()
                 .Property(e => e.ArticleNumber)
                 .HasConversion<string>();
+
             modelBuilder.Entity<CatalogEntry>()
                 .ToContainer("ArticleCatalog")
                 .HasPartitionKey(k => k.ArticleNumber)

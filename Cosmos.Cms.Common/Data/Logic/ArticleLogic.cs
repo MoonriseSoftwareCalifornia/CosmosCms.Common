@@ -27,6 +27,7 @@ namespace Cosmos.Cms.Common.Data.Logic
         private readonly bool _isEditor;
         private readonly TranslationServices _translationServices;
         private readonly IMemoryCache _memoryCache;
+
         /// <summary>
         ///     Publisher Constructor
         /// </summary>
@@ -42,6 +43,7 @@ namespace Cosmos.Cms.Common.Data.Logic
             IMemoryCache memoryCache,
             bool isEditor = false)
         {
+            _memoryCache = memoryCache;
             DbContext = dbContext;
             CosmosOptions = config;
             if (config.Value.GoogleCloudAuthConfig != null &&
