@@ -6,12 +6,14 @@ using Google.Type;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using static IdentityModel.ClaimComparer;
@@ -88,7 +90,7 @@ namespace Cosmos.Cms.Common.Data.Logic
             }
             else
             {
-                prefix = System.Web.HttpUtility.UrlDecode(prefix.ToLower().Replace("%20", "_").Replace(" ", "_")) + "/";
+                prefix = "/" + (System.Web.HttpUtility.UrlDecode(prefix.ToLower().Replace("%20", "_").Replace(" ", "_")) + "/").Trim('/');
             }
             var skip = pageNo * pageSize;
 
@@ -98,35 +100,48 @@ namespace Cosmos.Cms.Common.Data.Logic
             //            EF.Functions.Like(a.Title, prefix + "%") &&
             //            (EF.Functions.Like(a.Title, prefix + "%/%") == false)).Distinct();
 
-            var query = (from t in DbContext.Articles
-                    where t.Published <= DateTimeOffset.UtcNow &&
-                    t.StatusCode == 0 &&
-                    EF.Functions.Like(t.Title, prefix + "%") &&
-                    (EF.Functions.Like(t.Title, prefix + "%/%") == false)
-                    group t by new { t.Title, t.UrlPath }
-                    into g
-                    select new TableOfContentsItem
-                    {
-                        UrlPath = g.Key.UrlPath,
-                        Title = g.Key.Title,
-                        Published = g.Max(a => a.Published.Value),
-                        Updated = g.Max(a => a.Updated)
-                    }).Distinct();
-                    
 
-            var model = new TableOfContents();
+            // Regex example (?i)(^[cosmos]*)(\/[^\/]*){1}$
 
-            List<TableOfContentsItem> results;
+            var dcount = "{" + (prefix.Count(c => c == '/')) + "}";
+            var epath = prefix.TrimStart('/').Replace("/", "\\/");
+            var pattern = $"(?i)(^[{epath}]*)(\\/[^\\/]*){dcount}$";
+
+            var data = await (from t in DbContext.Pages
+                              where t.Published <= DateTimeOffset.UtcNow //&&
+                              && Regex.IsMatch(t.UrlPath, pattern)
+                              select new TableOfContentsItem
+                              {
+                                  UrlPath = t.UrlPath,
+                                  Title = t.Title,
+                                  Published = t.Published.Value,
+                                  Updated = t.Updated
+                              }).ToListAsync();
+
+
+            var groupby = data.AsQueryable();
 
             if (orderByPublishedDate)
             {
-                results = await query.OrderByDescending(o => o.Published).ToListAsync();
+                groupby = groupby.OrderByDescending(o => o.Published);
             }
             else
             {
-                results = await query.OrderBy(o => o.Title).ToListAsync();
+                groupby = groupby.OrderBy(o => o.Title);
             }
 
+            var results = (from t in groupby
+                           group t by new { t.Title, t.UrlPath } into g
+                           select new TableOfContentsItem()
+                           {
+                               Title = g.Key.Title,
+                               UrlPath = g.Key.UrlPath,
+                               Published = g.Max(o => o.Published),
+                               Updated = g.Max(o => o.Updated)
+                           }
+            ).ToList();
+
+            var model = new TableOfContents();
             model.TotalCount = results.Count;
             model.PageNo = pageNo;
             model.PageSize = pageSize;
@@ -238,7 +253,7 @@ namespace Cosmos.Cms.Common.Data.Logic
                 article.Content = result.Translations[1].TranslatedText;
             }
 
-            
+
             return new ArticleViewModel
             {
                 ArticleNumber = article.ArticleNumber,
