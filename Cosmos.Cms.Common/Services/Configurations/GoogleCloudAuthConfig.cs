@@ -26,14 +26,15 @@ namespace Cosmos.Cms.Common.Services.Configurations
         /// Parent project ID (if there is one)
         /// </summary>
         [Display(Name = "Parent projec Id (if there is one)")]
-        public string ParentProjectId { 
+        public string ParentProjectId
+        {
             get
             {
                 if (string.IsNullOrEmpty(_parentProjectId))
                     return ProjectId;
                 return _parentProjectId;
             }
-            set 
+            set
             {
                 _parentProjectId = value;
             }

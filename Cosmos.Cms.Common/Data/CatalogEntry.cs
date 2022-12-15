@@ -31,7 +31,7 @@ namespace Cosmos.Cms.Common.Data
         ///     Date/time of when this page was last updated
         /// </summary>
         [Display(Name = "Updated")]
-        public DateTimeOffset Updated { get;  set; }
+        public DateTimeOffset Updated { get; set; }
 
         /// <summary>
         ///     Date and time of when this item was published, and made public

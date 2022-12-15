@@ -18,7 +18,7 @@ namespace Cosmos.Cms.Common.Models
         [EmailAddress]
         [MaxLength(100)]
         [Required]
-        [Display( Name = "Your email address (required/will not be shared):")]
+        [Display(Name = "Your email address (required/will not be shared):")]
         public string FromEmail { get; set; }
 
         /// <summary>

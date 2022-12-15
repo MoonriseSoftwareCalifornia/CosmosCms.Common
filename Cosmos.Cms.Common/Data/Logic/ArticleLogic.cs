@@ -2,21 +2,17 @@
 using Cosmos.Cms.Common.Services;
 using Cosmos.Cms.Common.Services.Configurations;
 using Google.Cloud.Translate.V3;
-using Google.Type;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using static IdentityModel.ClaimComparer;
 
 namespace Cosmos.Cms.Common.Data.Logic
 {

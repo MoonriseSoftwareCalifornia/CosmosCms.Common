@@ -32,7 +32,7 @@ namespace Cosmos.Cms.Common.Data
         /// <summary>
         /// When the lock was set
         /// </summary>
-        public DateTimeOffset LockSetDateTime{ get; set; }
+        public DateTimeOffset LockSetDateTime { get; set; }
 
         /// <summary>
         /// Editor type for this lock

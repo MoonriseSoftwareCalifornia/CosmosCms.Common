@@ -22,7 +22,7 @@ namespace Cosmos.Cms.Common.Services
             if (config.Value != null && config.Value.GoogleCloudAuthConfig != null)
             {
                 _config = config;
-            }    
+            }
         }
 
         /// <summary>

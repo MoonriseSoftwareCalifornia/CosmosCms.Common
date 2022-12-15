@@ -219,7 +219,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                     {
                         ServiceType = SITESETTINGSSERVICETYPENAME,
                         Success = true,
-                        Message = $"Allowed file types set to: { _config.Value.SiteSettings.AllowedFileTypes }."
+                        Message = $"Allowed file types set to: {_config.Value.SiteSettings.AllowedFileTypes}."
                     });
                 }
 
@@ -239,7 +239,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                     {
                         ServiceType = SITESETTINGSSERVICETYPENAME,
                         Success = true,
-                        Message = $"File (BLOB) storage URL set to: { _config.Value.SiteSettings.BlobPublicUrl }."
+                        Message = $"File (BLOB) storage URL set to: {_config.Value.SiteSettings.BlobPublicUrl}."
                     });
                 }
 
@@ -259,7 +259,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                     {
                         ServiceType = SITESETTINGSSERVICETYPENAME,
                         Success = true,
-                        Message = $"File (BLOB) storage URL set to: { _config.Value.SiteSettings.PublisherUrl }."
+                        Message = $"File (BLOB) storage URL set to: {_config.Value.SiteSettings.PublisherUrl}."
                     });
                 }
 
@@ -271,7 +271,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                     {
                         ServiceType = SITESETTINGSSERVICETYPENAME,
                         Success = true,
-                        Message = $"{warn}Allow Setup set to: { _config.Value.SiteSettings.AllowSetup.Value }."
+                        Message = $"{warn}Allow Setup set to: {_config.Value.SiteSettings.AllowSetup.Value}."
                     });
                 }
 
@@ -283,7 +283,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                     {
                         ServiceType = SITESETTINGSSERVICETYPENAME,
                         Success = true,
-                        Message = $"{warn}Allow Reset set to: { _config.Value.SiteSettings.AllowReset }."
+                        Message = $"{warn}Allow Reset set to: {_config.Value.SiteSettings.AllowReset}."
                     });
                 }
             }
@@ -345,7 +345,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                                     {
                                         ServiceType = DBSERVICETYPENAME,
                                         Success = true,
-                                        Message = $"Can connect to: { sqlConnection.Hostname }."
+                                        Message = $"Can connect to: {sqlConnection.Hostname}."
                                     });
 
                                     var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
@@ -356,7 +356,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                                         {
                                             ServiceType = DBSERVICETYPENAME,
                                             Success = false,
-                                            Message = $"Migrations need to be applid to: { sqlConnection.Hostname }\\{sqlConnection.InitialCatalog}."
+                                            Message = $"Migrations need to be applid to: {sqlConnection.Hostname}\\{sqlConnection.InitialCatalog}."
                                         });
                                         foreach (var migration in pendingMigrations)
                                         {
@@ -364,7 +364,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                                             {
                                                 ServiceType = DBSERVICETYPENAME,
                                                 Success = false,
-                                                Message = $"Migration: { migration }."
+                                                Message = $"Migration: {migration}."
                                             });
                                         }
                                     }
@@ -375,7 +375,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                                     {
                                         ServiceType = DBSERVICETYPENAME,
                                         Success = false,
-                                        Message = $"Could not connect to DB server: { sqlConnection.Hostname }."
+                                        Message = $"Could not connect to DB server: {sqlConnection.Hostname}."
                                     });
                                 }
                             }
@@ -386,7 +386,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                             {
                                 ServiceType = DBSERVICETYPENAME,
                                 Success = false,
-                                Message = $"Error while trying to access: { sqlConnection.Hostname }. Error message: { e.Message }."
+                                Message = $"Error while trying to access: {sqlConnection.Hostname}. Error message: {e.Message}."
                             });
                         }
                     }
@@ -436,7 +436,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                             {
                                 ServiceType = BLOBSERVICETYPENAME,
                                 Success = true,
-                                Message = $"Can connect to: { storageConn.AzureBlobStorageEndPoint }."
+                                Message = $"Can connect to: {storageConn.AzureBlobStorageEndPoint}."
                             });
                         }
                         catch (Exception e)
@@ -445,7 +445,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                             {
                                 ServiceType = BLOBSERVICETYPENAME,
                                 Success = false,
-                                Message = $"Error connecting to: { storageConn.AzureBlobStorageEndPoint }.  Error message: { e.Message }."
+                                Message = $"Error connecting to: {storageConn.AzureBlobStorageEndPoint}.  Error message: {e.Message}."
                             });
                         }
                     }
@@ -463,7 +463,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                             {
                                 ServiceType = BLOBSERVICETYPENAME,
                                 Success = true,
-                                Message = $"Can connect to: { storageConn.ServiceUrl }."
+                                Message = $"Can connect to: {storageConn.ServiceUrl}."
                             });
                         }
                         catch (Exception e)
@@ -472,7 +472,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                             {
                                 ServiceType = BLOBSERVICETYPENAME,
                                 Success = false,
-                                Message = $"Error connecting to: { storageConn.ServiceUrl }.  Error message: { e.Message }."
+                                Message = $"Error connecting to: {storageConn.ServiceUrl}.  Error message: {e.Message}."
                             });
                         }
 
@@ -549,14 +549,14 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                                 break;
                             default:
                                 diagnostic.Success = false;
-                                diagnostic.Message = $"SendGrid error: { result.Body }.";
+                                diagnostic.Message = $"SendGrid error: {result.Body}.";
                                 break;
                         }
                     }
                     catch (Exception e)
                     {
                         diagnostic.Success = false;
-                        diagnostic.Message = $"SendGrid test error: { e.Message }.";
+                        diagnostic.Message = $"SendGrid test error: {e.Message}.";
                     }
                 }
             }
@@ -680,7 +680,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                                     {
                                         ServiceType = REDISSERVICETYPENAME,
                                         Success = false,
-                                        Message = $"Error connecting to Azure CDN.  Error message: { e.Message }."
+                                        Message = $"Error connecting to Azure CDN.  Error message: {e.Message}."
                                     });
                                 }
                             }
@@ -788,7 +788,7 @@ namespace Cosmos.Cms.Common.Services.Configurations.BootUp
                             {
                                 ServiceType = TRANSLATIONSSERVICETYPENAME,
                                 Success = false,
-                                Message = $"Error connecting to Google Translate.  Error message: { e.Message }."
+                                Message = $"Error connecting to Google Translate.  Error message: {e.Message}."
                             });
                         }
                     }

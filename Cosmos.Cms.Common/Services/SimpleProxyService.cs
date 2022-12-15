@@ -1,7 +1,6 @@
 ﻿using Cosmos.Cms.Common.Services.Configurations;
 using Microsoft.Extensions.Options;
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -78,17 +77,17 @@ namespace Cosmos.Cms.Common.Services
             {
                 httpClient = new HttpClient(new HttpClientHandler()
                 {
-                      PreAuthenticate = true,
+                    PreAuthenticate = true,
                     UseDefaultCredentials = false,
                     UseProxy = false,
                     Credentials = new NetworkCredential(userName, password)
                 });
-            } 
+            }
             else
             {
                 httpClient = new HttpClient();
             }
-            
+
             using (httpClient)
             {
                 HttpResponseMessage response;

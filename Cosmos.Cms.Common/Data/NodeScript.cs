@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Cosmos.Cms.Common.Data.Logic;
+using System;
 using System.ComponentModel.DataAnnotations;
-using Cosmos.Cms.Common.Data.Logic;
 
 namespace Cosmos.Cms.Common.Data
 {
