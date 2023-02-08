@@ -290,6 +290,9 @@ namespace Cosmos.Cms.Common.Services.Configurations
                 model.SiteSettings.PublisherUrl = GetValue<string>(configuration, "CosmosPublisherUrl");
                 model.SiteSettings.BlobPublicUrl = GetValue<string>(configuration, "CosmosStorageUrl");
                 var editorUrl = GetValue<string>(configuration, "CosmosEditorUrl");
+
+                model.SiteSettings.BlobPublicUrl = model.SiteSettings.BlobPublicUrl.TrimEnd('/');
+
                 if (!string.IsNullOrEmpty(editorUrl))
                 {
                     model.EditorUrls.Add(new EditorUrl() { CloudName = model.PrimaryCloud, Url = editorUrl });
