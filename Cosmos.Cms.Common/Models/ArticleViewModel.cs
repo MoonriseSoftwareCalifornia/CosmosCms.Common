@@ -1,5 +1,4 @@
 ﻿using Cosmos.Cms.Common.Data.Logic;
-using Cosmos.Cms.Common.Models.Attributes;
 using Cosmos.Cms.Common.Services.Configurations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -59,7 +58,6 @@ namespace Cosmos.Cms.Common.Models
         [MaxLength(80)]
         [StringLength(80)]
         [Display(Name = "Article title")]
-        [ArticleTitleValidation]
         [Remote("CheckTitle", "Edit", AdditionalFields = "ArticleNumber")]
         public string Title { get; set; }
 
